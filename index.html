@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moon Whisper Tarot – What Does the Universe Have for You?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --deep-purple: #1a0a2e;
+    --mid-purple: #2d1054;
+    --soft-purple: #6b3fa0;
+    --lavender: #c9aee0;
+    --gold: #d4a847;
+    --gold-light: #f0d080;
+    --cream: #fdf6e3;
+    --star-white: #fff9f0;
+  }
+
+  body {
+    background-color: var(--deep-purple);
+    color: var(--cream);
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Starfield */
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,249,240,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 60%, rgba(255,249,240,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(212,168,71,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 80%, rgba(255,249,240,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 35%, rgba(255,249,240,0.7) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 80% 70%, rgba(212,168,71,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 15%, rgba(255,249,240,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 85%, rgba(255,249,240,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 50%, rgba(201,174,224,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 40%, rgba(255,249,240,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 90%, rgba(255,249,240,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 55%, rgba(212,168,71,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 45%, rgba(255,249,240,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 48% 25%, rgba(201,174,224,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 72% 88%, rgba(255,249,240,0.5) 0%, transparent 100%);
+  }
+
+  .glow-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(107,63,160,0.25) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 680px; margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  /* Header */
+  .brand-header {
+    text-align: center; margin-bottom: 40px;
+  }
+  .moon-icon {
+    font-size: 2.8rem; color: var(--gold); display: block; margin-bottom: 4px;
+    filter: drop-shadow(0 0 12px rgba(212,168,71,0.6));
+    animation: moonPulse 4s ease-in-out infinite;
+  }
+  @keyframes moonPulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(212,168,71,0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(212,168,71,0.9)); }
+  }
+  .brand-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem; letter-spacing: 0.25em;
+    color: var(--gold); text-transform: uppercase;
+  }
+  .brand-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem; color: var(--lavender);
+    letter-spacing: 0.15em; margin-top: 2px;
+  }
+
+  /* Hero */
+  .hero { text-align: center; margin-bottom: 48px; }
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; font-style: italic;
+    color: var(--lavender); letter-spacing: 0.1em; margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    color: var(--star-white); line-height: 1.25;
+    margin-bottom: 16px;
+  }
+  .hero-title span { color: var(--gold-light); }
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem; color: var(--lavender);
+    line-height: 1.7; max-width: 480px; margin: 0 auto 24px;
+  }
+  .star-divider {
+    color: var(--gold); font-size: 1.1rem; letter-spacing: 0.5rem; opacity: 0.7;
+  }
+
+  /* Quiz */
+  .quiz-card {
+    background: linear-gradient(135deg, rgba(45,16,84,0.9) 0%, rgba(26,10,46,0.95) 100%);
+    border: 1px solid rgba(212,168,71,0.3);
+    border-radius: 16px;
+    padding: 36px 28px;
+    margin-bottom: 32px;
+    box-shadow: 0 0 40px rgba(107,63,160,0.2), inset 0 1px 0 rgba(212,168,71,0.1);
+  }
+
+  .progress-bar-wrap {
+    margin-bottom: 28px;
+  }
+  .progress-label {
+    font-size: 0.75rem; color: var(--lavender); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-bottom: 8px;
+    font-family: 'Lato', sans-serif;
+  }
+  .progress-track {
+    height: 3px; background: rgba(212,168,71,0.2); border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--soft-purple), var(--gold));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .question-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem; font-style: italic;
+    color: var(--gold); letter-spacing: 0.08em; margin-bottom: 8px;
+  }
+  .question-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem; color: var(--star-white);
+    line-height: 1.45; margin-bottom: 28px;
+  }
+
+  .options-grid {
+    display: grid; gap: 12px;
+  }
+  .option-btn {
+    background: rgba(107,63,160,0.15);
+    border: 1px solid rgba(212,168,71,0.25);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: left; cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex; align-items: flex-start; gap: 14px;
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem; line-height: 1.4;
+  }
+  .option-btn:hover {
+    background: rgba(107,63,160,0.35);
+    border-color: var(--gold);
+    transform: translateX(4px);
+    box-shadow: 0 0 16px rgba(212,168,71,0.15);
+  }
+  .option-btn.selected {
+    background: rgba(212,168,71,0.12);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+  .option-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .option-text strong {
+    display: block; font-size: 1rem; margin-bottom: 2px;
+    font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  }
+  .option-text small { color: var(--lavender); font-size: 0.88rem; }
+
+  /* Result */
+  .result-card {
+    display: none;
+    text-align: center;
+  }
+  .result-card.visible { display: block; animation: fadeUp 0.6s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-moon { font-size: 3.5rem; margin-bottom: 12px; display: block; }
+  .result-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic; color: var(--gold);
+    font-size: 0.95rem; letter-spacing: 0.1em; margin-bottom: 6px;
+  }
+  .result-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem; color: var(--star-white);
+    margin-bottom: 16px; line-height: 1.3;
+  }
+  .result-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; color: var(--lavender);
+    line-height: 1.75; margin-bottom: 24px;
+  }
+
+  .spread-box {
+    background: rgba(212,168,71,0.07);
+    border: 1px solid rgba(212,168,71,0.3);
+    border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 28px;
+    text-align: left;
+  }
+  .spread-box-title {
+    font-family: 'Cinzel', serif; font-size: 0.8rem;
+    color: var(--gold); letter-spacing: 0.18em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .spread-items { list-style: none; }
+  .spread-items li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem; color: var(--cream);
+    padding: 5px 0; border-bottom: 1px solid rgba(212,168,71,0.1);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .spread-items li:last-child { border-bottom: none; }
+  .spread-items li::before { content: '✦'; color: var(--gold); font-size: 0.7rem; }
+
+  .cta-btn {
+    display: inline-block; width: 100%;
+    background: linear-gradient(135deg, var(--gold) 0%, #b8892f 100%);
+    color: var(--deep-purple);
+    font-family: 'Cinzel', serif; font-weight: 600;
+    font-size: 0.9rem; letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 16px 32px; border-radius: 50px; text-decoration: none;
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(212,168,71,0.35);
+    transition: all 0.25s ease;
+    margin-bottom: 14px;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(212,168,71,0.5);
+  }
+  .cta-secondary {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem; color: var(--lavender);
+    cursor: pointer; background: none; border: none;
+    text-decoration: underline; text-underline-offset: 3px;
+    width: 100%; padding: 8px;
+  }
+  .cta-secondary:hover { color: var(--cream); }
+
+  /* Footer brand */
+  .footer-brand {
+    text-align: center; margin-top: 48px; padding-top: 32px;
+    border-top: 1px solid rgba(212,168,71,0.15);
+  }
+  .footer-brand .moon-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .footer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-style: italic; color: var(--gold);
+    margin-bottom: 2px;
+  }
+  .footer-title {
+    font-family: 'Lato', sans-serif; font-size: 0.72rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--lavender); margin-bottom: 10px;
+  }
+  .footer-ig {
+    font-family: 'Lato', sans-serif; font-size: 0.82rem;
+    color: var(--lavender);
+  }
+  .footer-ig a { color: var(--gold); text-decoration: none; }
+  .footer-ig a:hover { text-decoration: underline; }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.88rem; color: rgba(201,174,224,0.5);
+    letter-spacing: 0.18em; margin-top: 14px; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="glow-bg"></div>
+
+<div class="container">
+
+  <!-- Brand Header -->
+  <div class="brand-header">
+    <span class="moon-icon">☽</span>
+    <div class="brand-name">Moon Whisper Tarot</div>
+    <div class="brand-sub">by Jyoti Soohanda</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero" id="hero">
+    <div class="hero-eyebrow">✦ A Quick Cosmic Quiz ✦</div>
+    <h1 class="hero-title">What Does the Universe<br><span>Want You to Know?</span></h1>
+    <p class="hero-desc">Answer 4 honest questions. The cards already know your story — let's find out which reading is meant for you.</p>
+    <div class="star-divider">· · ✦ · ·</div>
+  </div>
+
+  <!-- Quiz Card -->
+  <div class="quiz-card" id="quizCard">
+    <div class="progress-bar-wrap">
+      <div class="progress-label">Your journey · <span id="progressText">Question 1 of 4</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:25%"></div></div>
+    </div>
+
+    <div id="questionArea">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="quiz-card result-card" id="resultCard">
+    <span class="result-moon" id="resultMoon">🌙</span>
+    <div class="result-label" id="resultLabel">The cards have spoken</div>
+    <h2 class="result-title" id="resultTitle">Your Reading</h2>
+    <p class="result-desc" id="resultDesc"></p>
+    <div class="spread-box">
+      <div class="spread-box-title">✦ Your Recommended Spread ✦</div>
+      <ul class="spread-items" id="spreadItems"></ul>
+    </div>
+    <a href="https://instagram.com/moonwhisper.tarot" target="_blank" class="cta-btn">
+      📩 Book Your Reading with Jyoti
+    </a>
+    <button class="cta-secondary" onclick="restartQuiz()">↩ Take the quiz again</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-brand">
+    <span class="moon-icon">☽</span>
+    <div class="footer-name">Jyoti Soohanda</div>
+    <div class="footer-title">Tarot Reader & Spiritual Guide</div>
+    <div class="footer-ig">Find me on Instagram: <a href="https://instagram.com/moonwhisper.tarot" target="_blank">@moonwhisper.tarot</a></div>
+    <div class="footer-tagline">Guidance · Clarity · Healing</div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    num: "Question 1 of 4",
+    text: "When you wake up at 3am with thoughts racing, what are you usually thinking about?",
+    options: [
+      { icon: "💼", label: "My career or finances", sub: "Am I on the right path? Will it work out?", tag: "career" },
+      { icon: "💜", label: "A relationship or person", sub: "Something unsaid, someone lost, or something uncertain", tag: "love" },
+      { icon: "🌀", label: "Who I am becoming", sub: "A feeling of change that I can't quite name yet", tag: "self" },
+      { icon: "🔮", label: "A big decision I'm avoiding", sub: "I know what I need to do... but something holds me back", tag: "decision" }
+    ]
+  },
+  {
+    num: "Question 2 of 4",
+    text: "If your life were a tarot card right now, which feels most true?",
+    options: [
+      { icon: "🌊", label: "The Moon — confusion and hidden truths", sub: "Things aren't clear. I sense more than I can see.", tag: "self" },
+      { icon: "⚡", label: "The Tower — unexpected change", sub: "Something has just shifted or is about to.", tag: "decision" },
+      { icon: "⚖️", label: "Justice — a crossroads moment", sub: "A choice must be made. The stakes feel real.", tag: "career" },
+      { icon: "💞", label: "The Lovers — matters of the heart", sub: "It's about love, connection, or a relationship.", tag: "love" }
+    ]
+  },
+  {
+    num: "Question 3 of 4",
+    text: "What would feel like the greatest gift from a tarot reading?",
+    options: [
+      { icon: "🕯️", label: "Permission to trust myself", sub: "Validation that my gut feeling is right", tag: "self" },
+      { icon: "🗺️", label: "A clear direction forward", sub: "Tell me which way to go", tag: "decision" },
+      { icon: "🌹", label: "Understanding in a relationship", sub: "What they feel, what I should do", tag: "love" },
+      { icon: "⭐", label: "Clarity on my purpose", sub: "What am I here to do? What are my opportunities?", tag: "career" }
+    ]
+  },
+  {
+    num: "Question 4 of 4",
+    text: "Be honest — what's the one thing you haven't said out loud yet?",
+    options: [
+      { icon: "🌑", label: "I'm scared I'm not good enough", sub: "", tag: "self" },
+      { icon: "🌙", label: "I miss someone, or something, deeply", sub: "", tag: "love" },
+      { icon: "✨", label: "I know I'm meant for something more", sub: "", tag: "career" },
+      { icon: "🌒", label: "I'm at a turning point and terrified", sub: "", tag: "decision" }
+    ]
+  }
+];
+
+const results = {
+  career: {
+    moon: "⭐",
+    label: "The stars have illuminated your path",
+    title: "Career & Purpose Reading",
+    desc: "Your soul is restless because it knows your potential hasn't been fully claimed yet. The cards are ready to reveal what's blocking your path, which opportunities are aligned with your true gifts, and what your next brave step looks like.",
+    spread: [
+      "Where you stand in your career right now",
+      "Hidden opportunity waiting for you",
+      "What's blocking your growth",
+      "Your purpose — what you're truly here to do",
+      "The outcome if you take that next step"
+    ]
+  },
+  love: {
+    moon: "🌹",
+    label: "The heart always knows",
+    title: "Love & Relationship Reading",
+    desc: "Love is the most powerful force the cards can illuminate. Whether it's a connection you're nurturing, a relationship at a crossroads, or love you're seeking — this reading will bring you the understanding and clarity you've been longing for.",
+    spread: [
+      "The energy you're bringing to love right now",
+      "What the other person is feeling or holding back",
+      "The invisible thread between you both",
+      "What needs to be healed or released",
+      "Where this connection is moving"
+    ]
+  },
+  self: {
+    moon: "🌙",
+    label: "The deepest knowing lives within",
+    title: "Soul & Self-Discovery Reading",
+    desc: "You're in a season of becoming. Something inside is shifting — you can feel it even if you can't name it yet. This reading is for the version of you that's emerging, helping you understand who you're becoming and what you're leaving behind.",
+    spread: [
+      "Who you are at your core right now",
+      "What you're in the process of releasing",
+      "The shadow — what you haven't faced yet",
+      "Your hidden strength",
+      "The new self that's arriving"
+    ]
+  },
+  decision: {
+    moon: "⚖️",
+    label: "Clarity becomes your greatest guide",
+    title: "Decision Making Reading",
+    desc: "You're standing at a fork in the road and the weight of the choice is real. The cards won't tell you what to do — they'll show you what you already know, so you can move forward with clarity instead of fear.",
+    spread: [
+      "The heart of the decision you're facing",
+      "What Path A looks like — and its hidden cost",
+      "What Path B looks like — and its hidden gift",
+      "What your intuition already knows",
+      "The reading's message: what you need to hear"
+    ]
+  }
+};
+
+let answers = [];
+let currentQ = 0;
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const pct = ((currentQ + 1) / questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = q.num;
+
+  const area = document.getElementById('questionArea');
+  area.innerHTML = `
+    <div class="question-num">${q.num}</div>
+    <div class="question-text">${q.text}</div>
+    <div class="options-grid">
+      ${q.options.map((o, i) => `
+        <button class="option-btn" onclick="selectOption(${i}, '${o.tag}')">
+          <span class="option-icon">${o.icon}</span>
+          <span class="option-text">
+            <strong>${o.label}</strong>
+            ${o.sub ? `<small>${o.sub}</small>` : ''}
+          </span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function selectOption(idx, tag) {
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  btns[idx].classList.add('selected');
+
+  setTimeout(() => {
+    answers.push(tag);
+    currentQ++;
+    if (currentQ < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 380);
+}
+
+function showResult() {
+  // Tally
+  const counts = { career: 0, love: 0, self: 0, decision: 0 };
+  answers.forEach(a => counts[a]++);
+  const winner = Object.keys(counts).reduce((a, b) => counts[a] >= counts[b] ? a : b);
+  const r = results[winner];
+
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('hero').style.display = 'none';
+
+  const rc = document.getElementById('resultCard');
+  document.getElementById('resultMoon').textContent = r.moon;
+  document.getElementById('resultLabel').textContent = r.label;
+  document.getElementById('resultTitle').textContent = r.title;
+  document.getElementById('resultDesc').textContent = r.desc;
+
+  const ul = document.getElementById('spreadItems');
+  ul.innerHTML = r.spread.map(s => `<li>${s}</li>`).join('');
+
+  rc.classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+  answers = []; currentQ = 0;
+  document.getElementById('resultCard').classList.remove('visible');
+  document.getElementById('quizCard').style.display = '';
+  document.getElementById('hero').style.display = '';
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+renderQuestion();
+</script>
+</body>
+</html>
