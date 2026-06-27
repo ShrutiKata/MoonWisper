@@ -1,8 +1,11 @@
-import { Redis } from '@upstash/redis';
+const { Redis } = require('@upstash/redis');
 
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-key');
@@ -10,7 +13,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const adminKey = req.headers['x-admin-key'] || req.query.key;
+  const adminKey = (req.headers && req.headers['x-admin-key']) || (req.query && req.query.key);
   if (adminKey !== process.env.ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -38,7 +41,7 @@ export default async function handler(req, res) {
       redis.smembers('stat:active_days')
     ]);
 
-    // Fetch daily stats for last 14 days
+    // Daily stats last 14 days
     const dailyStats = [];
     for (let i = 13; i >= 0; i--) {
       const d = new Date();
@@ -64,9 +67,6 @@ export default async function handler(req, res) {
     const tc = Number(totalQuizComplete) || 0;
     const ta = Number(totalCTAClick) || 0;
 
-    const completionRate = ts > 0 ? Math.round((tc / ts) * 100) : 0;
-    const ctaConversion  = tv > 0 ? Math.round((ta / tv) * 100) : 0;
-
     return res.status(200).json({
       totals: {
         page_visit: tv,
@@ -75,8 +75,8 @@ export default async function handler(req, res) {
         cta_click: ta
       },
       rates: {
-        completion_rate: completionRate,
-        cta_conversion: ctaConversion
+        completion_rate: ts > 0 ? Math.round((tc / ts) * 100) : 0,
+        cta_conversion:  tv > 0 ? Math.round((ta / tv) * 100) : 0
       },
       results: {
         career:   Number(resultCareer)   || 0,
@@ -91,4 +91,4 @@ export default async function handler(req, res) {
     console.error('Redis error:', err);
     return res.status(500).json({ error: 'Failed to fetch stats' });
   }
-}
+};
