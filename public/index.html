@@ -146,7 +146,7 @@ body{background:var(--dp);color:var(--cr);font-family:'Lato',sans-serif;min-heig
         <div class="spread-box-title">&#10022; Your Recommended Spread &#10022;</div>
         <ul class="spread-items" id="spreadItems"></ul>
       </div>
-      <a href="https://instagram.com/moonwhisper.tarot._" target="_blank" class="cta-btn">&#128233; Book Your Reading with Jyoti</a>
+      <a href="https://instagram.com/moonwhisper.tarot._" target="_blank" class="cta-btn" id="ctaBtn">&#128233; Book Your Reading with Jyoti</a>
       <button class="cta-secondary" onclick="restartQuiz()">&#8617; Take the quiz again</button>
     </div>
   </div>
@@ -201,6 +201,21 @@ function spawnConfetti(x,y){
     document.body.appendChild(c);setTimeout(function(){c.remove()},2500);
   }
 }
+
+/* ---- ANALYTICS TRACKING ---- */
+/* If this HTML is hosted on a different domain than your Vercel API,
+   replace '/api/track' below with the full URL, e.g.
+   'https://your-vercel-app.vercel.app/api/track' */
+function trackEvent(event, result){
+  try{
+    fetch('/api/track',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(result?{event:event,result:result}:{event:event})
+    }).catch(function(){});
+  }catch(e){}
+}
+
 var questions=[
   {text:"When you wake up at 3am with thoughts racing, what are you usually thinking about?",options:[
     {icon:"&#128188;",label:"My career or finances",sub:"Am I on the right path? Will it work out?",tag:"career"},
@@ -264,6 +279,7 @@ function renderQuestion(){
 }
 function selectOption(idx,tag,event){
   if(transitioning)return;transitioning=true;
+  if(answers.length===0){ trackEvent('quiz_start'); }
   var btns=document.querySelectorAll('.option-btn');
   btns.forEach(function(b){b.classList.remove('selected')});
   btns[idx].classList.add('selected');
@@ -285,6 +301,7 @@ function showResult(){
   var counts={career:0,love:0,self:0,decision:0};
   answers.forEach(function(a){counts[a]++});
   var winner=Object.keys(counts).reduce(function(a,b){return counts[a]>=counts[b]?a:b});
+  trackEvent('quiz_complete', winner);
   var r=results[winner];
   document.getElementById('quizCard').style.display='none';
   document.getElementById('hero').style.display='none';
@@ -314,6 +331,10 @@ function restartQuiz(){
   renderQuestion();
   window.scrollTo({top:0,behavior:'smooth'});
 }
+document.getElementById('ctaBtn').addEventListener('click',function(){
+  trackEvent('cta_click');
+});
+trackEvent('page_visit');
 renderQuestion();
 </script>
 </body>
