@@ -1,7 +1,8 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
-  // Allow cross-origin from same domain
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -19,7 +20,7 @@ export default async function handler(req, res) {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
   try {
-    const pipeline = kv.pipeline();
+    const pipeline = redis.pipeline();
 
     // Global counters
     pipeline.incr(`stat:total:${event}`);
@@ -27,7 +28,7 @@ export default async function handler(req, res) {
     // Daily counters
     pipeline.incr(`stat:daily:${today}:${event}`);
 
-    // Track which result types were given (for quiz_complete)
+    // Track result type breakdown
     if (event === 'quiz_complete' && result) {
       const validResults = ['career', 'love', 'self', 'decision'];
       if (validResults.includes(result)) {
@@ -35,14 +36,14 @@ export default async function handler(req, res) {
       }
     }
 
-    // Track daily unique days (for activity chart)
+    // Track active days
     pipeline.sadd('stat:active_days', today);
 
     await pipeline.exec();
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('KV error:', err);
+    console.error('Redis error:', err);
     return res.status(500).json({ error: 'Tracking failed' });
   }
 }
