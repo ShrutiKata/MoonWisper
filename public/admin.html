@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moon Whisper — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --dp:#1a0a2e;--mp:#2d1054;--sp:#6b3fa0;--lv:#c9aee0;
+  --gd:#d4a847;--gl:#f0d080;--cr:#fdf6e3;--sw:#fff9f0;
+  --green:#4caf7d;--red:#e05c5c;--blue:#5b9bd5;--orange:#e08c3c;
+}
+body{background:var(--dp);color:var(--cr);font-family:'Lato',sans-serif;min-height:100vh;padding:0}
+
+/* LOGIN SCREEN */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 30%,rgba(107,63,160,.25) 0%,transparent 60%);
+}
+.login-box{
+  background:linear-gradient(135deg,rgba(45,16,84,.95),rgba(26,10,46,.98));
+  border:1px solid rgba(212,168,71,.3);border-radius:20px;
+  padding:48px 40px;width:100%;max-width:380px;text-align:center;
+  box-shadow:0 0 60px rgba(107,63,160,.3);
+}
+.login-moon{font-size:2.5rem;color:var(--gd);display:block;margin-bottom:8px;filter:drop-shadow(0 0 12px rgba(212,168,71,.6))}
+.login-title{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gd);letter-spacing:.2em;margin-bottom:4px}
+.login-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--lv);font-size:.9rem;margin-bottom:32px}
+.login-input{
+  width:100%;background:rgba(107,63,160,.15);border:1px solid rgba(212,168,71,.25);
+  border-radius:10px;padding:14px 18px;color:var(--cr);font-family:'Lato',sans-serif;
+  font-size:.95rem;outline:none;transition:border-color .2s;margin-bottom:16px;
+  letter-spacing:.05em;
+}
+.login-input:focus{border-color:var(--gd)}
+.login-btn{
+  width:100%;background:linear-gradient(135deg,var(--gd),#b8892f);
+  color:var(--dp);font-family:'Cinzel',serif;font-weight:600;font-size:.85rem;
+  letter-spacing:.15em;text-transform:uppercase;padding:14px;border-radius:50px;
+  border:none;cursor:pointer;transition:all .2s;
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(212,168,71,.4)}
+.login-error{color:var(--red);font-size:.82rem;margin-top:12px;min-height:18px;font-family:'Cormorant Garamond',serif;font-style:italic}
+
+/* DASHBOARD */
+#dashboard{display:none}
+.top-bar{
+  background:linear-gradient(90deg,rgba(45,16,84,.98),rgba(26,10,46,.98));
+  border-bottom:1px solid rgba(212,168,71,.2);
+  padding:16px 32px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:10;
+}
+.top-bar-left{display:flex;align-items:center;gap:12px}
+.top-bar-moon{font-size:1.5rem;color:var(--gd);filter:drop-shadow(0 0 8px rgba(212,168,71,.5))}
+.top-bar-title{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gd);letter-spacing:.18em}
+.top-bar-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--lv);font-size:.8rem}
+.top-bar-right{display:flex;align-items:center;gap:16px}
+.refresh-btn{
+  background:rgba(107,63,160,.2);border:1px solid rgba(212,168,71,.25);
+  color:var(--lv);border-radius:8px;padding:8px 16px;cursor:pointer;
+  font-size:.8rem;letter-spacing:.08em;transition:all .2s;font-family:'Lato',sans-serif;
+}
+.refresh-btn:hover{background:rgba(107,63,160,.4);border-color:var(--gd);color:var(--cr)}
+.logout-btn{
+  background:none;border:1px solid rgba(201,174,224,.2);color:var(--lv);
+  border-radius:8px;padding:8px 16px;cursor:pointer;font-size:.8rem;
+  transition:all .2s;font-family:'Lato',sans-serif;
+}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.last-updated{font-size:.75rem;color:rgba(201,174,224,.5);font-style:italic}
+
+.dash-body{padding:32px;max-width:1100px;margin:0 auto}
+.dash-section-title{
+  font-family:'Cinzel',serif;font-size:.75rem;color:var(--gd);
+  letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.dash-section-title::after{content:'';flex:1;height:1px;background:rgba(212,168,71,.15)}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:36px}
+.stat-card{
+  background:linear-gradient(135deg,rgba(45,16,84,.8),rgba(26,10,46,.9));
+  border:1px solid rgba(212,168,71,.2);border-radius:14px;
+  padding:22px 24px;position:relative;overflow:hidden;transition:transform .2s;
+}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card::before{
+  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  border-radius:50%;opacity:.08;transform:translate(20px,-20px);
+}
+.stat-card.visits::before{background:var(--blue)}
+.stat-card.starts::before{background:var(--sp)}
+.stat-card.completes::before{background:var(--green)}
+.stat-card.cta::before{background:var(--gd)}
+.stat-icon{font-size:1.4rem;margin-bottom:8px;display:block}
+.stat-label{font-size:.72rem;color:var(--lv);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.stat-value{font-family:'Cinzel',serif;font-size:2rem;color:var(--sw);line-height:1}
+.stat-sub{font-size:.75rem;color:rgba(201,174,224,.6);margin-top:6px}
+.stat-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:.7rem;font-weight:700;letter-spacing:.05em;margin-top:8px;
+}
+.badge-green{background:rgba(76,175,125,.15);color:var(--green);border:1px solid rgba(76,175,125,.3)}
+.badge-gold{background:rgba(212,168,71,.12);color:var(--gd);border:1px solid rgba(212,168,71,.25)}
+
+/* RATE CARDS */
+.rate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:36px}
+.rate-card{
+  background:linear-gradient(135deg,rgba(45,16,84,.7),rgba(26,10,46,.85));
+  border:1px solid rgba(212,168,71,.15);border-radius:14px;padding:24px;
+}
+.rate-label{font-size:.72rem;color:var(--lv);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
+.rate-bar-wrap{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.rate-bar{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.rate-bar.completion{background:linear-gradient(90deg,var(--sp),var(--green))}
+.rate-bar.conversion{background:linear-gradient(90deg,var(--sp),var(--gd))}
+.rate-pct{font-family:'Cinzel',serif;font-size:1.6rem;color:var(--sw)}
+.rate-desc{font-size:.75rem;color:rgba(201,174,224,.55);margin-top:4px}
+
+/* RESULT BREAKDOWN */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:36px}
+.result-card{
+  background:rgba(45,16,84,.5);border:1px solid rgba(212,168,71,.15);
+  border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;
+}
+.result-card-icon{font-size:1.5rem}
+.result-card-label{font-size:.72rem;color:var(--lv);letter-spacing:.1em;text-transform:uppercase}
+.result-card-val{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--sw)}
+.result-pct-bar{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-top:4px}
+.result-pct-fill{height:100%;background:linear-gradient(90deg,var(--sp),var(--gd));border-radius:2px;transition:width 1s ease}
+
+/* DAILY CHART */
+.chart-wrap{
+  background:linear-gradient(135deg,rgba(45,16,84,.7),rgba(26,10,46,.85));
+  border:1px solid rgba(212,168,71,.15);border-radius:14px;
+  padding:24px;margin-bottom:36px;overflow-x:auto;
+}
+.chart-legend{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--lv)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.chart-inner{min-width:560px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:140px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,71,.1)}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end}
+.chart-bar-group{width:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center}
+.chart-bar{flex:1;border-radius:3px 3px 0 0;min-height:2px;transition:height .8s ease;max-width:12px}
+.chart-bar.visits{background:var(--blue);opacity:.8}
+.chart-bar.completes{background:var(--green);opacity:.9}
+.chart-bar.cta{background:var(--gd);opacity:.9}
+.chart-dates{display:flex;gap:6px;margin-top:6px}
+.chart-date{flex:1;text-align:center;font-size:.6rem;color:rgba(201,174,224,.4);white-space:nowrap}
+
+/* EMPTY STATE */
+.empty-msg{text-align:center;padding:48px;color:rgba(201,174,224,.4);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem}
+
+/* LOADING */
+.loading-overlay{
+  position:fixed;inset:0;background:rgba(26,10,46,.8);
+  display:flex;align-items:center;justify-content:center;
+  z-index:50;backdrop-filter:blur(4px);
+}
+.loading-spinner{
+  width:50px;height:50px;border:2px solid rgba(212,168,71,.2);
+  border-top-color:var(--gd);border-radius:50%;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .dash-body{padding:16px}
+  .top-bar{padding:12px 16px}
+  .stat-value{font-size:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <span class="login-moon">&#9789;</span>
+    <div class="login-title">Moon Whisper</div>
+    <div class="login-sub">Admin Portal</div>
+    <input type="password" class="login-input" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Enter the Portal</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="top-bar-moon">&#9789;</span>
+      <div>
+        <div class="top-bar-title">Moon Whisper Tarot</div>
+        <div class="top-bar-sub">Analytics Dashboard</div>
+      </div>
+    </div>
+    <div class="top-bar-right">
+      <span class="last-updated" id="lastUpdated"></span>
+      <button class="refresh-btn" onclick="loadStats()">&#8635; Refresh</button>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- OVERVIEW -->
+    <div class="dash-section-title">&#10022; Overview</div>
+    <div class="stat-grid">
+      <div class="stat-card visits">
+        <span class="stat-icon">&#128065;</span>
+        <div class="stat-label">Total Visits</div>
+        <div class="stat-value" id="s-visits">—</div>
+        <div class="stat-sub">Page loads</div>
+      </div>
+      <div class="stat-card starts">
+        <span class="stat-icon">&#127183;</span>
+        <div class="stat-label">Quiz Started</div>
+        <div class="stat-value" id="s-starts">—</div>
+        <div class="stat-sub">Clicked first answer</div>
+      </div>
+      <div class="stat-card completes">
+        <span class="stat-icon">&#10024;</span>
+        <div class="stat-label">Quiz Completed</div>
+        <div class="stat-value" id="s-completes">—</div>
+        <div class="stat-sub">Saw their result</div>
+      </div>
+      <div class="stat-card cta">
+        <span class="stat-icon">&#128233;</span>
+        <div class="stat-label">Booking Taps</div>
+        <div class="stat-value" id="s-cta">—</div>
+        <div class="stat-sub">Clicked "Book with Jyoti"</div>
+      </div>
+    </div>
+
+    <!-- CONVERSION RATES -->
+    <div class="dash-section-title">&#10022; Conversion Rates</div>
+    <div class="rate-grid">
+      <div class="rate-card">
+        <div class="rate-label">Quiz Completion Rate</div>
+        <div class="rate-pct" id="r-completion">—</div>
+        <div class="rate-bar-wrap"><div class="rate-bar completion" id="rb-completion" style="width:0%"></div></div>
+        <div class="rate-desc">Of visitors who started, how many finished</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-label">Booking Tap Rate</div>
+        <div class="rate-pct" id="r-cta">—</div>
+        <div class="rate-bar-wrap"><div class="rate-bar conversion" id="rb-cta" style="width:0%"></div></div>
+        <div class="rate-desc">Of all visitors, how many tapped "Book"</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-label">Active Days</div>
+        <div class="rate-pct" id="r-days">—</div>
+        <div class="rate-bar-wrap"><div class="rate-bar" style="background:var(--lv);width:100%"></div></div>
+        <div class="rate-desc">Days with at least one visitor</div>
+      </div>
+    </div>
+
+    <!-- RESULT BREAKDOWN -->
+    <div class="dash-section-title">&#10022; Quiz Results Breakdown</div>
+    <div class="result-grid" id="resultGrid">
+      <div class="result-card">
+        <div class="result-card-icon">&#11088;</div>
+        <div class="result-card-label">Career & Purpose</div>
+        <div class="result-card-val" id="res-career">—</div>
+        <div class="result-pct-bar"><div class="result-pct-fill" id="rpb-career" style="width:0%"></div></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">&#127801;</div>
+        <div class="result-card-label">Love & Relationships</div>
+        <div class="result-card-val" id="res-love">—</div>
+        <div class="result-pct-bar"><div class="result-pct-fill" id="rpb-love" style="width:0%"></div></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">&#127769;</div>
+        <div class="result-card-label">Soul & Self</div>
+        <div class="result-card-val" id="res-self">—</div>
+        <div class="result-pct-bar"><div class="result-pct-fill" id="rpb-self" style="width:0%"></div></div>
+      </div>
+      <div class="result-card">
+        <div class="result-card-icon">&#9878;</div>
+        <div class="result-card-label">Decision Making</div>
+        <div class="result-card-val" id="res-decision">—</div>
+        <div class="result-pct-bar"><div class="result-pct-fill" id="rpb-decision" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- DAILY CHART (last 14 days) -->
+    <div class="dash-section-title">&#10022; Last 14 Days</div>
+    <div class="chart-wrap">
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Visits</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Completions</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gd)"></div>Bookings</div>
+      </div>
+      <div class="chart-inner">
+        <div class="chart-bars" id="chartBars"></div>
+        <div class="chart-dates" id="chartDates"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var adminKey = '';
+
+function doLogin() {
+  var pw = document.getElementById('passwordInput').value.trim();
+  if (!pw) { document.getElementById('loginError').textContent = 'Please enter the password'; return; }
+  adminKey = pw;
+  loadStats(true);
+}
+
+function doLogout() {
+  adminKey = '';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+function loadStats(isLogin) {
+  var overlay = document.createElement('div');
+  overlay.className = 'loading-overlay';
+  overlay.innerHTML = '<div class="loading-spinner"></div>';
+  document.body.appendChild(overlay);
+
+  fetch('/api/stats?key=' + encodeURIComponent(adminKey))
+    .then(function(r) {
+      if (r.status === 401) throw new Error('wrong_password');
+      if (!r.ok) throw new Error('server_error');
+      return r.json();
+    })
+    .then(function(data) {
+      overlay.remove();
+      if (isLogin) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('loginError').textContent = '';
+      }
+      renderStats(data);
+    })
+    .catch(function(err) {
+      overlay.remove();
+      if (err.message === 'wrong_password') {
+        document.getElementById('loginError').textContent = 'Incorrect password. Try again.';
+        adminKey = '';
+      } else {
+        alert('Could not load stats. Check your connection.');
+      }
+    });
+}
+
+function renderStats(d) {
+  // Totals
+  document.getElementById('s-visits').textContent = d.totals.page_visit.toLocaleString();
+  document.getElementById('s-starts').textContent = d.totals.quiz_start.toLocaleString();
+  document.getElementById('s-completes').textContent = d.totals.quiz_complete.toLocaleString();
+  document.getElementById('s-cta').textContent = d.totals.cta_click.toLocaleString();
+
+  // Rates
+  var compPct = d.rates.completion_rate;
+  var ctaPct = d.rates.cta_conversion;
+  document.getElementById('r-completion').textContent = compPct + '%';
+  document.getElementById('r-cta').textContent = ctaPct + '%';
+  document.getElementById('r-days').textContent = d.active_days + ' days';
+  setTimeout(function() {
+    document.getElementById('rb-completion').style.width = compPct + '%';
+    document.getElementById('rb-cta').style.width = ctaPct + '%';
+  }, 100);
+
+  // Result breakdown
+  var res = d.results;
+  var total = (res.career + res.love + res.self + res.decision) || 1;
+  ['career','love','self','decision'].forEach(function(k) {
+    document.getElementById('res-' + k).textContent = res[k].toLocaleString();
+    setTimeout(function() {
+      document.getElementById('rpb-' + k).style.width = Math.round((res[k]/total)*100) + '%';
+    }, 200);
+  });
+
+  // Chart
+  renderChart(d.daily);
+
+  // Timestamp
+  document.getElementById('lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+function renderChart(daily) {
+  var maxVal = 1;
+  daily.forEach(function(d) { maxVal = Math.max(maxVal, d.visits, d.quiz_complete, d.cta_click); });
+
+  var barsEl = document.getElementById('chartBars');
+  var datesEl = document.getElementById('chartDates');
+  barsEl.innerHTML = '';
+  datesEl.innerHTML = '';
+
+  daily.forEach(function(d) {
+    var col = document.createElement('div');
+    col.className = 'chart-col';
+
+    var group = document.createElement('div');
+    group.className = 'chart-bar-group';
+
+    function makeBar(val, cls) {
+      var b = document.createElement('div');
+      b.className = 'chart-bar ' + cls;
+      var pct = Math.round((val / maxVal) * 130);
+      b.style.height = '2px';
+      group.appendChild(b);
+      setTimeout(function() { b.style.height = (pct || 2) + 'px'; }, 150);
+      b.title = cls + ': ' + val;
+    }
+
+    makeBar(d.visits, 'visits');
+    makeBar(d.quiz_complete, 'completes');
+    makeBar(d.cta_click, 'cta');
+
+    col.appendChild(group);
+    barsEl.appendChild(col);
+
+    var label = document.createElement('div');
+    label.className = 'chart-date';
+    var parts = d.date.split('-');
+    label.textContent = parts[2] + '/' + parts[1];
+    datesEl.appendChild(label);
+  });
+}
+</script>
+</body>
+</html>
